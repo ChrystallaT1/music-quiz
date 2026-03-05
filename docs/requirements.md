@@ -41,17 +41,17 @@ Implement the full OAuth 2.0 Authorization Code with PKCE flow so users can secu
 
 #### Acceptance Criteria
 
-- [ ] PKCE code verifier is generated (random string, 43–128 characters)
-- [ ] PKCE code challenge is generated (SHA-256 hash of verifier, base64url encoded)
-- [ ] Spotify authorisation URL is built with all required query params (`client_id`, `response_type`, `redirect_uri`, `scope`, `code_challenge_method`, `code_challenge`)
-- [ ] User is redirected to the Spotify login/auth page when login is triggered
-- [ ] OAuth callback is handled — `code` param is extracted from the return URL
-- [ ] Auth code is exchanged for an access token via `POST /api/token`
-- [ ] Access token, refresh token, and expiry timestamp are stored in `state.js`
-- [ ] Token expiry is checked before every API call
-- [ ] Silent token refresh is implemented using the refresh token when the access token has expired
-- [ ] `logout()` function clears all stored tokens and resets state
-- [ ] Auth errors are handled gracefully (e.g. user denies permission, invalid state param)
+- [✅] PKCE code verifier is generated (random string, 43–128 characters)
+- [✅] PKCE code challenge is generated (SHA-256 hash of verifier, base64url encoded)
+- [✅] Spotify authorisation URL is built with all required query params (`client_id`, `response_type`, `redirect_uri`, `scope`, `code_challenge_method`, `code_challenge`)
+- [✅] User is redirected to the Spotify login/auth page when login is triggered
+- [✅] OAuth callback is handled — `code` param is extracted from the return URL
+- [✅] Auth code is exchanged for an access token via `POST /api/token`
+- [✅] Access token, refresh token, and expiry timestamp are stored in `state.js`
+- [✅] Token expiry is checked before every API call
+- [✅] Silent token refresh is implemented using the refresh token when the access token has expired
+- [✅] `logout()` function clears all stored tokens and resets state
+- [✅] Auth errors are handled gracefully (e.g. user denies permission, invalid state param)
 
 ---
 
