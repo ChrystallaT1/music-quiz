@@ -83,12 +83,12 @@ A simple client-side router that controls which screen is visible at any time, e
 
 #### Acceptance Criteria
 
-- [ ] All screen names are defined as constants (e.g. `SCREENS.LANDING`, `SCREENS.PLAY`, etc.)
-- [ ] `navigate(screenName)` function shows the correct screen and hides all others
-- [ ] Screen switching is handled by toggling a CSS class or `data-screen` attribute
-- [ ] Each screen's `init()` function is called when navigating to it
-- [ ] Initial page load detects whether the user is already authenticated and routes accordingly
-- [ ] Post-auth redirect is handled — `?code=` in the URL is detected and routed to the callback handler
+- [✅] All screen names are defined as constants (e.g. `SCREENS.LANDING`, `SCREENS.PLAY`, etc.)
+- [✅] `navigate(screenName)` function shows the correct screen and hides all others
+- [✅] Screen switching is handled by toggling a CSS class or `data-screen` attribute
+- [✅] Each screen's `init()` function is called when navigating to it
+- [✅] Initial page load detects whether the user is already authenticated and routes accordingly
+- [✅] Post-auth redirect is handled — `?code=` in the URL is detected and routed to the callback handler
 
 ---
 
