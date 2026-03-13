@@ -107,16 +107,16 @@ All communication with the Spotify Web API is centralised here. This layer handl
 
 #### Acceptance Criteria
 
-- [ ] Base `apiRequest(endpoint, options)` helper attaches the Bearer token header and handles `401` errors
-- [ ] Search for artist tracks is implemented: `GET /v1/search?q={artist}&type=track&limit=50`
-- [ ] Fetch browse categories (genres) is implemented: `GET /v1/browse/categories?limit=50`
-- [ ] Fetch playlists for a category is implemented: `GET /v1/browse/categories/{id}/playlists`
-- [ ] Fetch tracks from a playlist is implemented: `GET /v1/playlists/{id}/tracks`
-- [ ] Tracks where `preview_url` is `null` are filtered out from all results
-- [ ] Tracks are filtered by popularity based on selected difficulty (Easy: ≥70, Medium: 40–69, Hard: <40)
-- [ ] `429 Too Many Requests` responses are handled by reading `Retry-After` and retrying
-- [ ] General API errors (non-2xx responses) surface a user-visible error message
-- [ ] Fetched track pools are cached in state to avoid redundant API calls mid-game
+- [✅] Base `apiRequest(endpoint, options)` helper attaches the Bearer token header and handles `401` errors
+- [✅] Search for artist tracks is implemented: `GET /v1/search?q={artist}&type=track&limit=50`
+- [✅] Fetch browse categories (genres) is implemented: `GET /v1/browse/categories?limit=50`
+- [✅] Fetch playlists for a category is implemented: `GET /v1/browse/categories/{id}/playlists`
+- [✅] Fetch tracks from a playlist is implemented: `GET /v1/playlists/{id}/tracks`
+- [✅] Tracks where `preview_url` is `null` are filtered out from all results
+- [✅] Tracks are filtered by popularity based on selected difficulty (Easy: ≥70, Medium: 40–69, Hard: <40)
+- [✅] `429 Too Many Requests` responses are handled by reading `Retry-After` and retrying
+- [✅] General API errors (non-2xx responses) surface a user-visible error message
+- [✅] Fetched track pools are cached in state to avoid redundant API calls mid-game
 
 ---
 
