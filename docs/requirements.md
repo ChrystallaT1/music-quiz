@@ -130,14 +130,14 @@ Responsible for constructing each quiz question — selecting the correct answer
 
 #### Acceptance Criteria
 
-- [ ] `buildQuestion(trackPool, mode)` selects one correct answer track from the pool
-- [ ] 3 decoy answer options are generated from the remaining pool
-- [ ] In Artist Mode, all 4 options are different songs by the same artist
-- [ ] In Genre Mode, decoys come from different artists within the same genre pool
-- [ ] The 4 answer options are shuffled into a random order
-- [ ] A question object is returned: `{ correctTrack, options: [track, track, track, track] }`
-- [ ] The same track is never used as both the correct answer and a decoy in the same question
-- [ ] Tracks used as the correct answer in previous rounds are not reused
+- [✅] `buildQuestion(trackPool, mode)` selects one correct answer track from the pool
+- [✅] 3 decoy answer options are generated from the remaining pool
+- [✅] In Artist Mode, all 4 options are different songs by the same artist
+- [✅] In Genre Mode, decoys come from different artists within the same genre pool
+- [✅] The 4 answer options are shuffled into a random order
+- [✅] A question object is returned: `{ correctTrack, options: [track, track, track, track] }`
+- [✅] The same track is never used as both the correct answer and a decoy in the same question
+- [✅] Tracks used as the correct answer in previous rounds are not reused
 
 ---
 
