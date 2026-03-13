@@ -65,13 +65,13 @@ A single centralised state object that all parts of the app read from and write 
 
 #### Acceptance Criteria
 
-- [ ] A central `state` object is defined and exported
-- [ ] Auth fields are included: `accessToken`, `refreshToken`, `tokenExpiry`
-- [ ] Game settings fields are included: `mode`, `difficulty`, `rounds`, `previewLength`, `artistOrGenre`
-- [ ] Active game fields are included: `currentRound`, `score`, `trackPool`, `currentTrack`, `answerChoices`, `roundResults`
-- [ ] `setState(updates)` helper merges partial updates into state
-- [ ] `resetGameState()` helper clears only game-related fields between plays
-- [ ] `getState()` helper reads current state from anywhere in the app
+- [✅] A central `state` object is defined and exported
+- [✅] Auth fields are included: `accessToken`, `refreshToken`, `tokenExpiry`
+- [✅] Game settings fields are included: `mode`, `difficulty`, `rounds`, `previewLength`, `artistOrGenre`
+- [✅] Active game fields are included: `currentRound`, `score`, `trackPool`, `currentTrack`, `answerChoices`, `roundResults`
+- [✅] `setState(updates)` helper merges partial updates into state
+- [✅] `resetGameState()` helper clears only game-related fields between plays
+- [✅] `getState()` helper reads current state from anywhere in the app
 
 ---
 

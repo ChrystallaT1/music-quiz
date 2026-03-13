@@ -1,19 +1,48 @@
-// all modules read from and write to this
 const state = {
   // Auth
   accessToken: null,
   refreshToken: null,
   tokenExpiry: null,
+
+  // Game settings
+  mode: null, // 'artist' | 'genre'
+  difficulty: null, // 'easy' | 'medium' | 'hard'
+  rounds: null, // 5 | 10 | 15
+  previewLength: null, // seconds: 5 | 10 | 15 | 30
+  artistOrGenre: null, // artist name/id or genre category id
+
+  // Active game
+  currentRound: 0,
+  score: 0,
+  trackPool: [],
+  currentTrack: null,
+  answerChoices: [],
+  roundResults: [],
 };
 
-// Merges partial updates into state
 function setState(updates) {
   Object.assign(state, updates);
 }
 
-// Returns a shallow copy of the current state
+function resetGameState() {
+  Object.assign(state, {
+    mode: null,
+    difficulty: null,
+    rounds: null,
+    previewLength: null,
+    artistOrGenre: null,
+    currentRound: 0,
+    score: 0,
+    trackPool: [],
+    currentTrack: null,
+    answerChoices: [],
+    roundResults: [],
+  });
+}
+
+// returns shallow copy of current
 function getState() {
   return { ...state };
 }
 
-export { state, setState, getState };
+export { state, setState, resetGameState, getState };
