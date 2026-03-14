@@ -85,41 +85,46 @@ async function searchArtistTracks(artistName, difficulty) {
   return tracks;
 }
 
-// fetch all available genre categories
-async function fetchCategories() {
-  const params = new URLSearchParams({ limit: "50" });
-  const data = await apiRequest(`/v1/browse/categories?${params}`);
-  return data.categories.items;
+// Static genre list
+const GENRES = [
+  { id: "pop", name: "Pop", icon: "🎤" },
+  { id: "rock", name: "Rock", icon: "🎸" },
+  { id: "hip-hop", name: "Hip-Hop", icon: "🎧" },
+  { id: "r-n-b", name: "R&B", icon: "🎶" },
+  { id: "electronic", name: "Electronic", icon: "🎛️" },
+  { id: "dance", name: "Dance", icon: "💃" },
+  { id: "indie", name: "Indie", icon: "🌿" },
+  { id: "jazz", name: "Jazz", icon: "🎷" },
+  { id: "classical", name: "Classical", icon: "🎻" },
+  { id: "soul", name: "Soul", icon: "🕊️" },
+  { id: "metal", name: "Metal", icon: "🤘" },
+  { id: "country", name: "Country", icon: "🤠" },
+  { id: "reggae", name: "Reggae", icon: "🌴" },
+  { id: "latin", name: "Latin", icon: "🪘" },
+  { id: "punk", name: "Punk", icon: "⚡" },
+  { id: "folk", name: "Folk", icon: "🪕" },
+  { id: "blues", name: "Blues", icon: "🎺" },
+  { id: "k-pop", name: "K-Pop", icon: "⭐" },
+];
+
+function fetchCategories() {
+  return GENRES;
 }
 
-// fetch playlists for a genre category
-async function fetchCategoryPlaylists(categoryId) {
-  const data = await apiRequest(
-    `/v1/browse/categories/${categoryId}/playlists`,
-  );
-  return data.playlists.items;
-}
-
-// fetch tracks from a playlist
-async function fetchPlaylistTracks(playlistId) {
-  const data = await apiRequest(`/v1/playlists/${playlistId}/tracks`);
-  return data.items.map((item) => item.track).filter((track) => track !== null);
-}
-
-// build a genre track pool — walks playlists until 10+ playable tracks found
-async function fetchGenreTracks(categoryId, difficulty) {
-  const cacheKey = `genre:${categoryId}:${difficulty}`;
+// build a genre track pool using search API with genre filter
+async function fetchGenreTracks(genreId, difficulty) {
+  const cacheKey = `genre:${genreId}:${difficulty}`;
   const { trackPool } = getState();
   if (trackPool?.cacheKey === cacheKey) return trackPool.tracks;
 
-  const playlists = await fetchCategoryPlaylists(categoryId);
+  const params = new URLSearchParams({
+    q: `genre:${genreId}`,
+    type: "track",
+    limit: "50",
+  });
 
-  let tracks = [];
-  for (const playlist of playlists) {
-    const raw = await fetchPlaylistTracks(playlist.id);
-    tracks = filterTracks(raw, difficulty);
-    if (tracks.length >= 10) break;
-  }
+  const data = await apiRequest(`/v1/search?${params}`);
+  const tracks = filterTracks(data.tracks.items, difficulty);
 
   setState({ trackPool: { cacheKey, tracks } });
   return tracks;
@@ -137,7 +142,5 @@ export {
   searchArtistTracks,
   searchArtists,
   fetchCategories,
-  fetchCategoryPlaylists,
-  fetchPlaylistTracks,
   fetchGenreTracks,
 };

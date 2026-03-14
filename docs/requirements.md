@@ -236,14 +236,14 @@ Allows the player to specify which artist or genre they want the quiz to be base
 
 #### Acceptance Criteria
 
-- [ ] In Artist Mode, a text input is rendered for the user to type an artist name
-- [ ] Live autocomplete suggestions appear as the user types, powered by the Spotify search API
-- [ ] On selecting a suggestion, the artist is saved to state
-- [ ] In Genre Mode, a list or grid of available Spotify categories is fetched and displayed
-- [ ] On selecting a genre, the category ID is saved to state
-- [ ] A loading spinner is shown while fetching suggestions or categories
-- [ ] A validation message is shown if the user tries to proceed without making a selection
-- [ ] A Back button returns the user to mode select
+- [✅] In Artist Mode, a text input is rendered for the user to type an artist name
+- [✅] Live autocomplete suggestions appear as the user types, powered by the Spotify search API
+- [✅] On selecting a suggestion, the artist is saved to state
+- [✅] In Genre Mode, a list or grid of available Spotify categories is fetched and displayed
+- [✅] On selecting a genre, the category ID is saved to state
+- [✅] A loading spinner is shown while fetching suggestions or categories
+- [✅] A validation message is shown if the user tries to proceed without making a selection
+- [✅] A Back button returns the user to mode select
 
 ---
 

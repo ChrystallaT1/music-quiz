@@ -1,8 +1,8 @@
 import { getState } from "../js/state.js";
-import { redirectToSpotify } from "../spotify/authPkce.js";
+import { prepareAuthUrl } from "../spotify/authPkce.js";
 import { navigate, SCREENS } from "../js/router.js";
 
-function init() {
+async function init() {
   const el = document.querySelector('[data-screen="landing"]');
   const { accessToken } = getState();
 
@@ -14,10 +14,12 @@ function init() {
       ${
         accessToken
           ? `<button class="btn btn-primary" id="play-btn">Play</button>`
-          : `<button class="btn btn-primary" id="connect-btn">Connect with Spotify</button>`
+          : `
+            <div id="btn-wrap" class="loading-wrap">
+              <div class="spinner"></div>
+            </div>
+          `
       }
-
-      <div id="auth-error" class="error-msg" hidden></div>
 
       <div id="loading-indicator" class="loading-wrap" hidden>
         <div class="spinner"></div>
@@ -31,11 +33,14 @@ function init() {
       navigate(SCREENS.MODE_SELECT);
     });
   } else {
-    const connectBtn = el.querySelector("#connect-btn");
-    connectBtn.addEventListener("click", () => {
-      connectBtn.disabled = true;
+    const btnWrap = el.querySelector("#btn-wrap");
+
+    const authUrl = await prepareAuthUrl();
+
+    btnWrap.outerHTML = `<a class="btn btn-primary" id="connect-link" href="${authUrl}">Connect with Spotify</a>`;
+
+    el.querySelector("#connect-link").addEventListener("click", () => {
       el.querySelector("#loading-indicator").hidden = false;
-      redirectToSpotify();
     });
   }
 }

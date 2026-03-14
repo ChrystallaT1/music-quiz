@@ -1,5 +1,6 @@
 import { setState } from "../js/state.js";
 import { navigate, SCREENS } from "../js/router.js";
+import { logout } from "../spotify/authPkce.js";
 
 function init() {
   const el = document.querySelector('[data-screen="modeSelect"]');
@@ -8,6 +9,8 @@ function init() {
     <div class="screen-container">
       <h1 class="app-title">Music Quiz</h1>
       <p class="app-desc">Select a game mode to get started.</p>
+
+      <button class="btn btn-secondary mode-back-btn" id="back-btn">← Sign Out</button>
 
       <div class="mode-options">
         <button class="mode-card" id="mode-artist">
@@ -26,6 +29,10 @@ function init() {
       </div>
     </div>
   `;
+
+  el.querySelector("#back-btn").addEventListener("click", () => {
+    logout();
+  });
 
   el.querySelector("#mode-artist").addEventListener("click", () => {
     setState({ mode: "artist" });

@@ -4,7 +4,7 @@ import { setState, getState } from "../js/state.js";
 const CONFIG = {
   CLIENT_ID: "4d4c34f7f5464f7f8edb318fbab073d9",
 
-  REDIRECT_URI: "http://127.0.0.1:5500/callback",
+  REDIRECT_URI: "http://127.0.0.1:5500/",
 
   SPOTIFY_AUTH_URL: "https://accounts.spotify.com/authorize",
   SPOTIFY_TOKEN_URL: "https://accounts.spotify.com/api/token",
@@ -48,15 +48,26 @@ function buildAuthUrl(codeChallenge) {
   return `${CONFIG.SPOTIFY_AUTH_URL}?${params.toString()}`;
 }
 
-// Generates verifier/challenge, saves verifier to localStorage, then redirects to Spotify login
-async function redirectToSpotify() {
+// builds and returns the Spotify auth URL, reusing an existing verifier/URL pair if present.
+async function prepareAuthUrl() {
+  const existingVerifier = sessionStorage.getItem("pkce_verifier");
+  const existingUrl = sessionStorage.getItem("pkce_auth_url");
+  if (existingVerifier && existingUrl) return existingUrl;
+
   const verifier = generateRandomString(128);
   const challenge = await generateCodeChallenge(verifier);
-  localStorage.setItem("pkce_verifier", verifier);
-  window.location.href = buildAuthUrl(challenge);
+  const authUrl = buildAuthUrl(challenge);
+  sessionStorage.setItem("pkce_verifier", verifier);
+  sessionStorage.setItem("pkce_auth_url", authUrl);
+  return authUrl;
 }
 
-// Reads the callback URL and extracts the auth code (or error) from the query string
+// redirects to Spotify login — call prepareAuthUrl() first, then pass the result here
+function redirectToSpotify(authUrl) {
+  window.location.href = authUrl;
+}
+
+// reads the callback URL and extracts the auth code (or error) from the query string
 function extractCallbackParams() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
@@ -66,7 +77,7 @@ function extractCallbackParams() {
 
 // POSTs the auth code + stored verifier to Spotify's token endpoint and returns the tokens
 async function exchangeCodeForToken(code) {
-  const verifier = localStorage.getItem("pkce_verifier");
+  const verifier = sessionStorage.getItem("pkce_verifier");
 
   const body = new URLSearchParams({
     client_id: CONFIG.CLIENT_ID,
@@ -89,7 +100,8 @@ async function exchangeCodeForToken(code) {
     );
   }
 
-  localStorage.removeItem("pkce_verifier");
+  sessionStorage.removeItem("pkce_verifier");
+  sessionStorage.removeItem("pkce_auth_url");
   return await response.json();
 }
 
@@ -139,15 +151,24 @@ async function refreshAccessToken() {
   storeTokens(tokenData);
 }
 
-// Clears all tokens from state and redirects to the landing page
+// Clears all tokens from state and navigates to the landing screen
 function logout() {
   setState({
     accessToken: null,
     refreshToken: null,
     tokenExpiry: null,
   });
-  localStorage.removeItem("pkce_verifier");
-  window.location.href = "/";
+  sessionStorage.removeItem("pkce_verifier");
+  sessionStorage.removeItem("pkce_auth_url");
+  if (_onLogout) _onLogout();
+  else window.location.href = "/";
+}
+
+let _onLogout = null;
+
+// Register a callback to call instead of a hard redirect on logout
+function onLogout(cb) {
+  _onLogout = cb;
 }
 
 // Converts a Spotify auth error code into a user-friendly message and displays it
@@ -178,6 +199,7 @@ export {
   generateRandomString,
   generateCodeChallenge,
   buildAuthUrl,
+  prepareAuthUrl,
   redirectToSpotify,
   extractCallbackParams,
   exchangeCodeForToken,
@@ -185,5 +207,6 @@ export {
   isTokenExpired,
   refreshAccessToken,
   logout,
+  onLogout,
   handleAuthError,
 };

@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <script>
+      // Runs immediately — saves the OAuth code to sessionStorage before
+      // Live Server's hot-reload script can trigger a page reload and strip it
+      (function () {
+        var code = new URLSearchParams(window.location.search).get("code");
+        if (code) {
+          sessionStorage.setItem("spotify_oauth_code", code);
+          window.history.replaceState({}, "", window.location.pathname);
+        }
+      })();
+    </script>
     <main id="app">
       <section class="screen" data-screen="landing" hidden></section>
       <section class="screen" data-screen="modeSelect" hidden></section>

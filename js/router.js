@@ -3,6 +3,7 @@ import {
   exchangeCodeForToken,
   storeTokens,
   handleAuthError,
+  onLogout,
 } from "../spotify/authPkce.js";
 import { init as initLanding } from "../screens/landing.js";
 import { init as initModeSelect } from "../screens/modeSelect.js";
@@ -43,10 +44,13 @@ function navigate(screenName) {
   if (initFn) initFn();
 }
 
+// soft-navigate to landing on logout instead of a hard page reload
+onLogout(() => navigate(SCREENS.LANDING));
+
 // runs on page load — handles post-auth callback or routes based on auth status
 async function init() {
   const params = new URLSearchParams(window.location.search);
-  const code = params.get("code");
+  const code = params.get("code") || sessionStorage.getItem("spotify_oauth_code");
   const error = params.get("error");
 
   // Post-auth redirect: ?code= or ?error= present in the URL
@@ -59,12 +63,12 @@ async function init() {
 
     try {
       const tokenData = await exchangeCodeForToken(code);
+      sessionStorage.removeItem("spotify_oauth_code");
       storeTokens(tokenData);
-      // Remove ?code= from the URL so a refresh doesn't re-trigger this
       window.history.replaceState({}, "", window.location.pathname);
       navigate(SCREENS.MODE_SELECT);
     } catch (err) {
-      console.error("Token exchange failed:", err);
+      sessionStorage.removeItem("spotify_oauth_code");
       navigate(SCREENS.LANDING);
     }
     return;
