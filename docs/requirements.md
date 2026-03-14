@@ -217,9 +217,9 @@ Lets the player choose between Artist Mode and Genre Mode before configuring the
 
 #### Acceptance Criteria
 
-- [ ] Two clearly distinct options are rendered: Artist Mode and Genre Mode
-- [ ] A brief description of each mode is shown
-- [ ] On selection, the chosen mode is saved to state and the app navigates to `pickArtistOrGenre`
+- [✅] Two clearly distinct options are rendered: Artist Mode and Genre Mode
+- [✅] A brief description of each mode is shown
+- [✅] On selection, the chosen mode is saved to state and the app navigates to `pickArtistOrGenre`
 
 ---
 

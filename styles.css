@@ -167,6 +167,67 @@ p {
   text-align: center;
 }
 
+/* Mode Select */
+
+.mode-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.mode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--surface-2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    transform 0.1s;
+}
+
+.mode-card:hover {
+  border-color: var(--green);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+}
+
+.mode-card:active {
+  transform: translateY(0);
+}
+
+.mode-icon {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.mode-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mode-card-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.mode-card-cta {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--green);
+  margin-top: 0.5rem;
+}
+
 /* Audio Player  */
 
 .audio-player {
