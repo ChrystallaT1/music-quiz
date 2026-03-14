@@ -125,9 +125,17 @@ async function fetchGenreTracks(categoryId, difficulty) {
   return tracks;
 }
 
+// search artists by name — used for autocomplete in pickArtistOrGenre
+async function searchArtists(query) {
+  const params = new URLSearchParams({ q: query, type: "artist", limit: "8" });
+  const data = await apiRequest(`/v1/search?${params}`);
+  return data.artists.items;
+}
+
 export {
   apiRequest,
   searchArtistTracks,
+  searchArtists,
   fetchCategories,
   fetchCategoryPlaylists,
   fetchPlaylistTracks,

@@ -198,10 +198,10 @@ The first screen a user sees. Its primary job is to authenticate the user with S
 
 #### Acceptance Criteria
 
-- [ ] App title and brief description are rendered
-- [ ] A "Connect with Spotify" button is shown and triggers the PKCE auth flow
-- [ ] If the user is already authenticated, a "Play" button is shown instead of the login button
-- [ ] A loading indicator is displayed while the auth redirect is in progress
+- [✅] App title and brief description are rendered
+- [✅] A "Connect with Spotify" button is shown and triggers the PKCE auth flow
+- [✅] If the user is already authenticated, a "Play" button is shown instead of the login button
+- [✅] A loading indicator is displayed while the auth redirect is in progress
 
 ---
 

@@ -1,4 +1,173 @@
-/* ─── Audio Player ─────────────────────────────────────────────────────────── */
+/*  Variables & Reset  */
+
+:root {
+  --green: #1db954;
+  --green-hover: #1ed760;
+  --bg: #121212;
+  --surface: #181818;
+  --surface-2: #282828;
+  --text: #ffffff;
+  --text-muted: #b3b3b3;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+/*  Screen layout  */
+
+.screen:not([hidden]) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screen-container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+}
+
+/*  Typography  */
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+p {
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.app-title {
+  color: var(--green);
+  letter-spacing: -0.5px;
+}
+.app-desc {
+  max-width: 320px;
+}
+
+/*  Buttons  */
+
+.btn {
+  padding: 0.75rem 2.25rem;
+  border-radius: 2rem;
+  border: none;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    transform 0.1s,
+    border-color 0.15s;
+}
+
+.btn-primary {
+  background: var(--green);
+  color: #000;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--green-hover);
+  transform: scale(1.03);
+}
+.btn-primary:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.btn-primary:disabled {
+  background: #535353;
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1.5px solid #535353;
+}
+.btn-secondary:hover {
+  border-color: var(--text);
+  transform: scale(1.03);
+}
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+
+/*  Loading spinner  */
+
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--surface-2);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* error message  */
+
+.error-msg {
+  color: #e22134;
+  font-size: 0.9rem;
+  background: rgba(226, 33, 52, 0.1);
+  border: 1px solid rgba(226, 33, 52, 0.3);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  width: 100%;
+  text-align: center;
+}
+
+/* Audio Player  */
 
 .audio-player {
   display: flex;
