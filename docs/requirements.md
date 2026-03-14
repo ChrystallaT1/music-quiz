@@ -170,13 +170,16 @@ Handles all audio playback for track previews, including trimming previews to th
 
 #### Acceptance Criteria
 
-- [ ] `loadPreview(previewUrl)` loads a Spotify 30-second preview into an `<audio>` element
-- [ ] `playPreview(durationSeconds)` plays from the start and auto-stops after the configured preview length
-- [ ] `stopPreview()` immediately stops audio playback
-- [ ] `resetPlayer()` clears the loaded audio source between rounds
-- [ ] A fallback "tap to play" is shown if browser autoplay is blocked
-- [ ] A visible progress bar or countdown timer is shown during preview playback
-- [ ] Audio is muted/stopped automatically when the user submits an answer
+- [✅] `loadPreview(previewUrl)` loads a Spotify 30-second preview into an `<audio>` element
+- [✅] `playPreview(durationSeconds)` plays from the start and auto-stops after the configured preview length
+- [✅] `stopPreview()` immediately stops audio playback
+- [✅] `resetPlayer()` clears the loaded audio source between rounds
+- [✅] A fallback "tap to play" is shown if browser autoplay is blocked
+- [✅] A visible progress bar or countdown timer is shown during preview playback
+- [✅] Audio is muted/stopped automatically when the user submits an answer
+- [✅] The play button toggles to a stop button during playback; pressing it pauses at the current position
+- [✅] Pressing play after a pause resumes from where it left off (not from the start)
+- [✅] A volume slider allows the player to adjust audio volume in real time
 
 ---
 
