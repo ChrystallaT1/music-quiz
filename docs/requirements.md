@@ -149,11 +149,11 @@ Tracks the player's performance across all rounds and produces the data needed f
 
 #### Acceptance Criteria
 
-- [ ] `recordAnswer(isCorrect, timeTaken)` logs the result of each round
-- [ ] +1 point is awarded for a correct answer
-- [ ] `getFinalScore()` returns total correct answers and total rounds
-- [ ] `getRoundResults()` returns a per-round breakdown (track name, correct answer, user's pick, result)
-- [ ] `resetScores()` clears all scoring data between games
+- [✅] `recordAnswer(isCorrect, timeTaken)` logs the result of each round
+- [✅] +1 point is awarded for a correct answer
+- [✅] `getFinalScore()` returns total correct answers and total rounds
+- [✅] `getRoundResults()` returns a per-round breakdown (track name, correct answer, user's pick, result)
+- [✅] `resetScores()` clears all scoring data between games
 
 ---
 
