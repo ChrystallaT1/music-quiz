@@ -390,6 +390,82 @@ p {
   line-height: 1;
 }
 
+/* Game Settings */
+
+.settings-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.settings-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.settings-options {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.settings-option {
+  padding: 0.5rem 1.25rem;
+  border-radius: 2rem;
+  border: 1.5px solid #535353;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s,
+    transform 0.1s;
+}
+
+.settings-option:hover {
+  border-color: var(--text);
+  transform: scale(1.04);
+}
+
+.settings-option:active {
+  transform: scale(0.97);
+}
+
+.settings-option--selected {
+  border-color: var(--green);
+  background: rgba(29, 185, 84, 0.15);
+  color: var(--green);
+}
+
+.settings-feedback {
+  width: 100%;
+}
+
+.warn-msg {
+  color: #e8a020;
+  font-size: 0.9rem;
+  background: rgba(232, 160, 32, 0.1);
+  border: 1px solid rgba(232, 160, 32, 0.3);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  text-align: center;
+}
+
 /* Audio Player  */
 
 .audio-player {
