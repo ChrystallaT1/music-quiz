@@ -95,7 +95,7 @@ async function searchArtistTracks(artistName) {
     });
 
     // Normalize and filter tracks
-    const tracks = results.map(normalizeTrack).filter(filterTracksWithPreviews);
+    const tracks = filterTracksWithPreviews(results.map(normalizeTrack));
 
     return tracks;
   } catch (error) {
@@ -118,7 +118,7 @@ async function fetchGenreTracks(genreName) {
     });
 
     // Normalize and filter tracks
-    const tracks = results.map(normalizeTrack).filter(filterTracksWithPreviews);
+    const tracks = filterTracksWithPreviews(results.map(normalizeTrack));
 
     return tracks;
   } catch (error) {
