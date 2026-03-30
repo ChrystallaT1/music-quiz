@@ -48,6 +48,25 @@ function filterTracksWithPreviews(tracks) {
   });
 }
 
+// Remove duplicate songs & duplicate answer options
+function deduplicateByName(tracks) {
+  const seen = new Set();
+  return tracks.filter((track) => {
+    const key = track.trackName?.toLowerCase().trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function applyDifficultyFilter(tracks, difficulty) {
+  if (!difficulty || tracks.length < 9) return tracks;
+  const third = Math.floor(tracks.length / 3);
+  if (difficulty === "easy") return tracks.slice(0, third);
+  if (difficulty === "hard") return tracks.slice(tracks.length - third);
+  return tracks.slice(third, third * 2);
+}
+
 async function searchArtists(query) {
   if (!query || query.trim().length === 0) {
     return [];
@@ -81,7 +100,7 @@ async function searchArtists(query) {
   }
 }
 
-async function searchArtistTracks(artistName) {
+async function searchArtistTracks(artistName, difficulty) {
   if (!artistName || artistName.trim().length === 0) {
     return [];
   }
@@ -94,17 +113,17 @@ async function searchArtistTracks(artistName) {
       limit: 200,
     });
 
-    // Normalize and filter tracks
-    const tracks = filterTracksWithPreviews(results.map(normalizeTrack));
-
-    return tracks;
+    const tracks = deduplicateByName(
+      filterTracksWithPreviews(results.map(normalizeTrack)),
+    );
+    return applyDifficultyFilter(tracks, difficulty);
   } catch (error) {
     console.error(`Failed to fetch tracks for artist "${artistName}":`, error);
     throw error;
   }
 }
 
-async function fetchGenreTracks(genreName) {
+async function fetchGenreTracks(genreName, difficulty) {
   if (!genreName || genreName.trim().length === 0) {
     return [];
   }
@@ -117,10 +136,10 @@ async function fetchGenreTracks(genreName) {
       limit: 200,
     });
 
-    // Normalize and filter tracks
-    const tracks = filterTracksWithPreviews(results.map(normalizeTrack));
-
-    return tracks;
+    const tracks = deduplicateByName(
+      filterTracksWithPreviews(results.map(normalizeTrack)),
+    );
+    return applyDifficultyFilter(tracks, difficulty);
   } catch (error) {
     console.error(`Failed to fetch tracks for genre "${genreName}":`, error);
     throw error;
