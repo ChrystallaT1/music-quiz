@@ -79,9 +79,7 @@ All communication with the iTunes Search API is centralised here. iTunes is a pu
 - [✅] Search for artists is implemented: `GET /search?term={name}&media=music&entity=allArtist`
 - [✅] Response parsing handles iTunes data structure (e.g. `trackName`, `artistName`, `previewUrl`, `artworkUrl100`)
 - [✅] Tracks where `previewUrl` is missing or invalid are filtered out from all results
-- [✅] Basic track filtering by duration (invalid or extremely short previews are excluded)
 - [✅] General API errors (network failures, non-2xx responses) surface a user-visible error message
-- [✅] Fetched track pools are cached in state to avoid redundant API calls mid-game
 
 ---
 
