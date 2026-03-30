@@ -31,13 +31,15 @@ function navigate(screenName) {
   });
 
   const target = document.querySelector(`[data-screen="${screenName}"]`);
-  if (target) target.hidden = false;
+  if (target) {
+    target.hidden = false;
+    target.innerHTML = "";
+  }
 
   const initFn = screenInits[screenName];
   if (initFn) initFn();
 }
 
-// runs on page load
 function init() {
   navigate(SCREENS.LANDING);
 }
