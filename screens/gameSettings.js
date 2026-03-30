@@ -1,69 +1,91 @@
 import { getState, setState } from "../js/state.js";
 import { navigate, SCREENS } from "../js/router.js";
-import { searchArtistTracks, fetchGenreTracks } from "../spotify/spotifyApi.js";
+import {
+  searchArtistTracks,
+  fetchGenreTracks,
+} from "../music-api/itunesApi.js";
 
 const DEFAULTS = { difficulty: "medium", rounds: 10, previewLength: 10 };
 
-// Minimum tracks needed to safely run a game (must fill every round)
+// Minimum tracks needed to safely run a game
 const MIN_TRACKS_ARTIST = 4;
 const MIN_TRACKS_GENRE = 4;
 
 function init() {
   const el = document.querySelector('[data-screen="gameSettings"]');
-
-  el.innerHTML = `
-    <div class="screen-container">
-      <h1 class="app-title">Game Settings</h1>
-      <p class="app-desc">Customise your game before you start.</p>
-
-      <div class="settings-groups">
-
-        <div class="settings-group">
-          <h3 class="settings-label">Difficulty</h3>
-          <div class="settings-options" data-setting="difficulty">
-            <button class="settings-option" data-value="easy">Easy</button>
-            <button class="settings-option" data-value="medium">Medium</button>
-            <button class="settings-option" data-value="hard">Hard</button>
-          </div>
-        </div>
-
-        <div class="settings-group">
-          <h3 class="settings-label">Rounds</h3>
-          <div class="settings-options" data-setting="rounds">
-            <button class="settings-option" data-value="5">5</button>
-            <button class="settings-option" data-value="10">10</button>
-            <button class="settings-option" data-value="15">15</button>
-          </div>
-        </div>
-
-        <div class="settings-group">
-          <h3 class="settings-label">Preview Length</h3>
-          <div class="settings-options" data-setting="previewLength">
-            <button class="settings-option" data-value="5">5s</button>
-            <button class="settings-option" data-value="10">10s</button>
-            <button class="settings-option" data-value="15">15s</button>
-            <button class="settings-option" data-value="30">30s</button>
-          </div>
-        </div>
-
-      </div>
-
-      <p id="settings-feedback" class="settings-feedback" hidden></p>
-
-      <div class="pick-actions">
-        <button class="btn btn-secondary" id="back-btn">← Back</button>
-        <button class="btn btn-primary" id="start-btn">Start Game</button>
-      </div>
-    </div>
-  `;
-
   const selections = { ...DEFAULTS };
 
-  // Apply defaults visually
+  const container = document.createElement("div");
+  container.className = "screen-container";
+
+  const title = document.createElement("h1");
+  title.className = "app-title";
+  title.textContent = "Game Settings";
+
+  const desc = document.createElement("p");
+  desc.className = "app-desc";
+  desc.textContent = "Customise your game before you start.";
+
+  const groups = document.createElement("div");
+  groups.className = "settings-groups";
+  groups.appendChild(
+    buildSettingGroup("Difficulty", "difficulty", [
+      { value: "easy", label: "Easy", hint: "Popular tracks" },
+      { value: "medium", label: "Medium", hint: "Mixed tracks" },
+      { value: "hard", label: "Hard", hint: "Deep cuts" },
+    ]),
+  );
+  groups.appendChild(
+    buildSettingGroup("Questions", "rounds", [
+      { value: "5", label: "5" },
+      { value: "10", label: "10" },
+      { value: "15", label: "15" },
+    ]),
+  );
+  groups.appendChild(
+    buildSettingGroup("Preview Length", "previewLength", [
+      { value: "5", label: "5s" },
+      { value: "10", label: "10s" },
+      { value: "15", label: "15s" },
+    ]),
+  );
+
+  const feedback = document.createElement("p");
+  feedback.id = "settings-feedback";
+  feedback.className = "settings-feedback";
+  feedback.hidden = true;
+
+  const actions = document.createElement("div");
+  actions.className = "pick-actions";
+
+  const backBtn = document.createElement("button");
+  backBtn.className = "btn btn-secondary";
+  backBtn.id = "back-btn";
+  backBtn.textContent = "← Back";
+  backBtn.addEventListener("click", () =>
+    navigate(SCREENS.PICK_ARTIST_OR_GENRE),
+  );
+
+  const startBtn = document.createElement("button");
+  startBtn.className = "btn btn-primary";
+  startBtn.id = "start-btn";
+  startBtn.textContent = "Start Game";
+  startBtn.addEventListener("click", () => handleStart(el, selections));
+
+  actions.appendChild(backBtn);
+  actions.appendChild(startBtn);
+
+  container.appendChild(title);
+  container.appendChild(desc);
+  container.appendChild(groups);
+  container.appendChild(feedback);
+  container.appendChild(actions);
+  el.appendChild(container);
+
   applySelections(el, selections);
 
-  // Wire up each options group
-  el.querySelectorAll(".settings-options").forEach((group) => {
+  // handle option clicks for all setting groups
+  groups.querySelectorAll(".settings-options").forEach((group) => {
     group.addEventListener("click", (e) => {
       const option = e.target.closest(".settings-option");
       if (!option) return;
@@ -78,18 +100,40 @@ function init() {
           o.classList.toggle("settings-option--selected", o === option),
         );
 
-      // clear  feedback when user changes a setting
       hideFeedback(el);
     });
   });
+}
 
-  el.querySelector("#back-btn").addEventListener("click", () => {
-    navigate(SCREENS.PICK_ARTIST_OR_GENRE);
+function buildSettingGroup(label, setting, options) {
+  const group = document.createElement("div");
+  group.className = "settings-group";
+
+  const heading = document.createElement("h3");
+  heading.className = "settings-label";
+  heading.textContent = label;
+
+  const optionsEl = document.createElement("div");
+  optionsEl.className = "settings-options";
+  optionsEl.dataset.setting = setting;
+
+  options.forEach(({ value, label: text, hint }) => {
+    const btn = document.createElement("button");
+    btn.className = "settings-option";
+    btn.dataset.value = value;
+    btn.textContent = text;
+    if (hint) {
+      const span = document.createElement("span");
+      span.className = "settings-hint";
+      span.textContent = hint;
+      btn.appendChild(span);
+    }
+    optionsEl.appendChild(btn);
   });
 
-  el.querySelector("#start-btn").addEventListener("click", () =>
-    handleStart(el, selections),
-  );
+  group.appendChild(heading);
+  group.appendChild(optionsEl);
+  return group;
 }
 
 function applySelections(el, selections) {
@@ -116,12 +160,9 @@ async function handleStart(el, selections) {
   try {
     let tracks;
     if (mode === "artist") {
-      tracks = await searchArtistTracks(
-        artistOrGenre.name,
-        selections.difficulty,
-      );
+      tracks = await searchArtistTracks(artistOrGenre, selections.difficulty);
     } else {
-      tracks = await fetchGenreTracks(artistOrGenre.id, selections.difficulty);
+      tracks = await fetchGenreTracks(artistOrGenre, selections.difficulty);
     }
 
     const minNeeded = Math.max(
@@ -132,7 +173,7 @@ async function handleStart(el, selections) {
     if (tracks.length < minNeeded) {
       showFeedback(
         el,
-        `Only ${tracks.length} playable track${tracks.length === 1 ? "" : "s"} found for ${selections.difficulty} difficulty — try an easier difficulty or fewer rounds.`,
+        `Only ${tracks.length} playable track${tracks.length === 1 ? "" : "s"} found — try fewer rounds.`,
         "warn",
       );
       startBtn.disabled = false;
@@ -148,12 +189,9 @@ async function handleStart(el, selections) {
     });
 
     navigate(SCREENS.PLAY);
-  } catch {
-    showFeedback(
-      el,
-      "Failed to load tracks. Please check your connection and try again.",
-      "error",
-    );
+  } catch (err) {
+    console.error("[gameSettings] handleStart error:", err);
+    showFeedback(el, `Failed to load tracks: ${err.message || err}`, "error");
     startBtn.disabled = false;
     startBtn.textContent = "Start Game";
   }
