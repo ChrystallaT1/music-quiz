@@ -1,9 +1,4 @@
 const state = {
-  // Auth
-  accessToken: null,
-  refreshToken: null,
-  tokenExpiry: null,
-
   // Game settings
   mode: null, // 'artist' | 'genre'
   difficulty: null, // 'easy' | 'medium' | 'hard'
