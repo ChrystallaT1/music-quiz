@@ -1,48 +1,34 @@
-import { getState } from "../js/state.js";
-import { prepareAuthUrl } from "../spotify/authPkce.js";
 import { navigate, SCREENS } from "../js/router.js";
 
-async function init() {
+function init() {
   const el = document.querySelector('[data-screen="landing"]');
-  const { accessToken } = getState();
 
-  el.innerHTML = `
-    <div class="screen-container">
-      <h1 class="app-title">Music Quiz</h1>
-      <p class="app-desc">Test your music knowledge with real Spotify previews. Can you name that track?</p>
+  el.innerHTML = "";
 
-      ${
-        accessToken
-          ? `<button class="btn btn-primary" id="play-btn">Play</button>`
-          : `
-            <div id="btn-wrap" class="loading-wrap">
-              <div class="spinner"></div>
-            </div>
-          `
-      }
+  const container = document.createElement("div");
+  container.className = "screen-container";
 
-      <div id="loading-indicator" class="loading-wrap" hidden>
-        <div class="spinner"></div>
-        <p>Redirecting to Spotify&hellip;</p>
-      </div>
-    </div>
-  `;
+  const title = document.createElement("h1");
+  title.className = "app-title";
+  title.textContent = "Music Quiz";
 
-  if (accessToken) {
-    el.querySelector("#play-btn").addEventListener("click", () => {
-      navigate(SCREENS.MODE_SELECT);
-    });
-  } else {
-    const btnWrap = el.querySelector("#btn-wrap");
+  const desc = document.createElement("p");
+  desc.className = "app-desc";
+  desc.textContent =
+    "Test your music knowledge with real music previews. Can you name that track?";
 
-    const authUrl = await prepareAuthUrl();
+  const playBtn = document.createElement("button");
+  playBtn.className = "btn btn-primary";
+  playBtn.id = "play-btn";
+  playBtn.textContent = "Play";
+  playBtn.addEventListener("click", () => {
+    navigate(SCREENS.MODE_SELECT);
+  });
 
-    btnWrap.outerHTML = `<a class="btn btn-primary" id="connect-link" href="${authUrl}">Connect with Spotify</a>`;
-
-    el.querySelector("#connect-link").addEventListener("click", () => {
-      el.querySelector("#loading-indicator").hidden = false;
-    });
-  }
+  container.appendChild(title);
+  container.appendChild(desc);
+  container.appendChild(playBtn);
+  el.appendChild(container);
 }
 
 export { init };
