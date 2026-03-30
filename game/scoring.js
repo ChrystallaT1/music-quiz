@@ -27,9 +27,9 @@ function getFinalScore() {
 function getRoundResults() {
   return getState().roundResults.map((r, i) => ({
     round: i + 1,
-    trackName: r.correctTrack?.name ?? "Unknown",
-    correctAnswer: r.correctTrack?.artists?.[0]?.name ?? "Unknown",
-    userPick: r.userPick?.name ?? null,
+    trackName: r.correctTrack?.trackName ?? "Unknown",
+    correctAnswer: r.correctTrack?.artistName ?? "Unknown",
+    userPick: r.userPick?.trackName ?? null,
     isCorrect: r.isCorrect,
     timeTaken: r.timeTaken,
   }));
