@@ -8,56 +8,24 @@
 
 #### Description
 
-Set up the full project directory, create all necessary files, and configure the Spotify Developer app so the project is ready to build on.
+Set up the full project directory, create all necessary files, and prepare the codebase to use the iTunes API (no configuration needed as iTunes API is public).
 
 #### Acceptance Criteria
 
-- [✅] Project folder structure is created (`game/`, `screens/`, `spotify/`, `js/`, `assets/`, `docs/`)
-- [✅] `index.html` is created as the single entry point for the app
+- [✅] Project folder structure is created (`game/`, `screens/`, `music-api/`, `js/`, `assets/`, `docs/`)
+- [✅] `index.html` is created as the single entry point for the app (no OAuth callback needed)
 - [✅] `styles.css` is created and linked in `index.html`
 - [✅] `app.js` is created as the main JavaScript entry point
 - [✅] All screen JS files are created as empty modules (`landing.js`, `modeSelect.js`, `gameSettings.js`, `pickArtistOrGenre.js`, `play.js`, `results.js`)
-- [✅] All logic JS files are created as empty modules (`questionBuilder.js`, `scoring.js`, `authPkce.js`, `spotifyApi.js`, `router.js`, `state.js`, `audioPlayer.js`)
-- [✅] `.gitignore` is configured (ignoring secrets, `.env`, any sensitive files)
-- [✅] A new app is registered on the Spotify Developer Dashboard
-- [✅] The Redirect URI is set in the Spotify app settings (e.g. `http://localhost:5500/callback`)
-- [✅] The Client ID is stored as a constant in a config section of `authPkce.js`
+- [✅] All logic JS files are created as empty modules (`questionBuilder.js`, `scoring.js`, `itunesApi.js`, `router.js`, `state.js`, `audioPlayer.js`)
+- [✅] `.gitignore` is configured (ignoring `.env`, any sensitive files)
+- [✅] No API registration required (iTunes API is public with rate limits only)
 
 ---
 
-## 2. Authentication
+## 2. Core Infrastructure
 
-### 2. PKCE Auth Flow (`authPkce.js`)
-
-#### Description
-
-Implement the full OAuth 2.0 Authorization Code with PKCE flow so users can securely connect their Spotify account without exposing any client secret. This is the foundation that gates access to all API functionality.
-
-#### User Stories
-
-- As a user, I want to log in with my Spotify account so that the app can access music data on my behalf.
-- As a user, I want my session to stay active during a game so that I am not interrupted mid-play.
-- As a user, I want a logout option so that I can disconnect my account.
-
-#### Acceptance Criteria
-
-- [✅] PKCE code verifier is generated (random string, 43–128 characters)
-- [✅] PKCE code challenge is generated (SHA-256 hash of verifier, base64url encoded)
-- [✅] Spotify authorisation URL is built with all required query params (`client_id`, `response_type`, `redirect_uri`, `scope`, `code_challenge_method`, `code_challenge`)
-- [✅] User is redirected to the Spotify login/auth page when login is triggered
-- [✅] OAuth callback is handled — `code` param is extracted from the return URL
-- [✅] Auth code is exchanged for an access token via `POST /api/token`
-- [✅] Access token, refresh token, and expiry timestamp are stored in `state.js`
-- [✅] Token expiry is checked before every API call
-- [✅] Silent token refresh is implemented using the refresh token when the access token has expired
-- [✅] `logout()` function clears all stored tokens and resets state
-- [✅] Auth errors are handled gracefully (e.g. user denies permission, invalid state param)
-
----
-
-## 3. Core Infrastructure
-
-### 3. State Management (`state.js`)
+### 2. State Management (`state.js`)
 
 #### Description
 
@@ -66,7 +34,6 @@ A single centralised state object that all parts of the app read from and write 
 #### Acceptance Criteria
 
 - [✅] A central `state` object is defined and exported
-- [✅] Auth fields are included: `accessToken`, `refreshToken`, `tokenExpiry`
 - [✅] Game settings fields are included: `mode`, `difficulty`, `rounds`, `previewLength`, `artistOrGenre`
 - [✅] Active game fields are included: `currentRound`, `score`, `trackPool`, `currentTrack`, `answerChoices`, `roundResults`
 - [✅] `setState(updates)` helper merges partial updates into state
@@ -75,7 +42,7 @@ A single centralised state object that all parts of the app read from and write 
 
 ---
 
-### 4. Routing (`router.js`)
+### 3. Routing (`router.js`)
 
 #### Description
 
@@ -87,42 +54,40 @@ A simple client-side router that controls which screen is visible at any time, e
 - [✅] `navigate(screenName)` function shows the correct screen and hides all others
 - [✅] Screen switching is handled by toggling a CSS class or `data-screen` attribute
 - [✅] Each screen's `init()` function is called when navigating to it
-- [✅] Initial page load detects whether the user is already authenticated and routes accordingly
-- [✅] Post-auth redirect is handled — `?code=` in the URL is detected and routed to the callback handler
+- [✅] Initial page load detects routing appropriately and navigates to landing or mode select
 
 ---
 
-## 4. Spotify API Layer
+## 3. iTunes API Layer
 
-### 5. API Integration (`spotifyApi.js`)
+### 4. API Integration (`music-api/itunesApi.js`)
 
 #### Description
 
-All communication with the Spotify Web API is centralised here. This layer handles authentication headers, error responses, and data filtering so that the rest of the app works with clean, ready-to-use data.
+All communication with the iTunes Search API is centralised here. iTunes is a public, unauthenticated API with no rate limiting concerns for this use case. This layer handles search requests, response parsing, and data filtering so that the rest of the app works with clean, ready-to-use data.
 
 #### User Stories
 
-- As a player, I want the app to pull real tracks from Spotify so that the quiz uses genuine music data.
+- As a player, I want the app to pull real tracks from iTunes so that the quiz uses genuine music data.
 - As a player, I want audio previews to always be available so that I can actually hear the clips.
 
 #### Acceptance Criteria
 
-- [✅] Base `apiRequest(endpoint, options)` helper attaches the Bearer token header and handles `401` errors
-- [✅] Search for artist tracks is implemented: `GET /v1/search?q={artist}&type=track&limit=50`
-- [✅] Fetch browse categories (genres) is implemented: `GET /v1/browse/categories?limit=50`
-- [✅] Fetch playlists for a category is implemented: `GET /v1/browse/categories/{id}/playlists`
-- [✅] Fetch tracks from a playlist is implemented: `GET /v1/playlists/{id}/tracks`
-- [✅] Tracks where `preview_url` is `null` are filtered out from all results
-- [✅] Tracks are filtered by popularity based on selected difficulty (Easy: ≥70, Medium: 40–69, Hard: <40)
-- [✅] `429 Too Many Requests` responses are handled by reading `Retry-After` and retrying
-- [✅] General API errors (non-2xx responses) surface a user-visible error message
+- [✅] Base `apiRequest(endpoint, params)` helper sends GET requests to iTunes Search API (`https://itunes.apple.com/search`)
+- [✅] Search for artist tracks is implemented: `GET /search?term={artist}&media=music&entity=song`
+- [✅] Search for tracks by genre name is implemented: `GET /search?term={genre}&media=music&entity=song`
+- [✅] Search for artists is implemented: `GET /search?term={name}&media=music&entity=allArtist`
+- [✅] Response parsing handles iTunes data structure (e.g. `trackName`, `artistName`, `previewUrl`, `artworkUrl100`)
+- [✅] Tracks where `previewUrl` is missing or invalid are filtered out from all results
+- [✅] Basic track filtering by duration (invalid or extremely short previews are excluded)
+- [✅] General API errors (network failures, non-2xx responses) surface a user-visible error message
 - [✅] Fetched track pools are cached in state to avoid redundant API calls mid-game
 
 ---
 
-## 5. Game Logic
+## 4. Game Logic
 
-### 6. Question Builder (`game/questionBuilder.js`)
+### 5. Question Builder (`game/questionBuilder.js`)
 
 #### Description
 
@@ -141,7 +106,7 @@ Responsible for constructing each quiz question — selecting the correct answer
 
 ---
 
-### 7. Scoring (`game/scoring.js`)
+### 6. Scoring (`game/scoring.js`)
 
 #### Description
 
@@ -157,7 +122,7 @@ Tracks the player's performance across all rounds and produces the data needed f
 
 ---
 
-### 8. Audio Player (`js/audioPlayer.js`)
+### 7. Audio Player (`js/audioPlayer.js`)
 
 #### Description
 
@@ -170,7 +135,7 @@ Handles all audio playback for track previews, including trimming previews to th
 
 #### Acceptance Criteria
 
-- [✅] `loadPreview(previewUrl)` loads a Spotify 30-second preview into an `<audio>` element
+- [✅] `loadPreview(previewUrl)` loads an iTunes 30-second preview into an `<audio>` element
 - [✅] `playPreview(durationSeconds)` plays from the start and auto-stops after the configured preview length
 - [✅] `stopPreview()` immediately stops audio playback
 - [✅] `resetPlayer()` clears the loaded audio source between rounds
@@ -183,29 +148,28 @@ Handles all audio playback for track previews, including trimming previews to th
 
 ---
 
-## 6. Screens
+## 5. Screens
 
-### 9. Landing Screen (`screens/landing.js`)
+### 8. Landing Screen (`screens/landing.js`)
 
 #### Description
 
-The first screen a user sees. Its primary job is to authenticate the user with Spotify before anything else in the app can function.
+The first screen a user sees. Since iTunes API requires no authentication, this screen can launch directly into the mode selection.
 
 #### User Stories
 
-- As a first-time user, I want a clear login button so that I can connect my Spotify account easily.
-- As a returning user, I want to skip the login step if I'm already connected so that I can get into the game quickly.
+- As a first-time user, I want a clear entry point so that I can start playing immediately.
+- As a returning user, I want quick access to the game without delays.
 
 #### Acceptance Criteria
 
 - [✅] App title and brief description are rendered
-- [✅] A "Connect with Spotify" button is shown and triggers the PKCE auth flow
-- [✅] If the user is already authenticated, a "Play" button is shown instead of the login button
-- [✅] A loading indicator is displayed while the auth redirect is in progress
+- [✅] A "Play" button is shown and navigates to mode select
+- [✅] App aesthetic is clean and welcoming
 
 ---
 
-### 10. Mode Select Screen (`screens/modeSelect.js`)
+### 9. Mode Select Screen (`screens/modeSelect.js`)
 
 #### Description
 
@@ -223,11 +187,11 @@ Lets the player choose between Artist Mode and Genre Mode before configuring the
 
 ---
 
-### 11. Pick Artist or Genre Screen (`screens/pickArtistOrGenre.js`)
+### 10. Pick Artist or Genre Screen (`screens/pickArtistOrGenre.js`)
 
 #### Description
 
-Allows the player to specify which artist or genre they want the quiz to be based on, with live Spotify data powering the selection.
+Allows the player to specify which artist or genre they want the quiz to be based on, with live iTunes API data powering the selection (manual genre list since iTunes doesn't categorise by genre).
 
 #### User Stories
 
@@ -237,17 +201,17 @@ Allows the player to specify which artist or genre they want the quiz to be base
 #### Acceptance Criteria
 
 - [✅] In Artist Mode, a text input is rendered for the user to type an artist name
-- [✅] Live autocomplete suggestions appear as the user types, powered by the Spotify search API
+- [✅] Live autocomplete suggestions appear as the user types, powered by the iTunes search API
 - [✅] On selecting a suggestion, the artist is saved to state
-- [✅] In Genre Mode, a list or grid of available Spotify categories is fetched and displayed
-- [✅] On selecting a genre, the category ID is saved to state
-- [✅] A loading spinner is shown while fetching suggestions or categories
+- [✅] In Genre Mode, a list or grid of predefined genres is displayed (e.g. Pop, Rock, Hip-Hop, etc.)
+- [✅] On selecting a genre, the genre name is saved to state
+- [✅] A loading spinner is shown while fetching suggestions
 - [✅] A validation message is shown if the user tries to proceed without making a selection
 - [✅] A Back button returns the user to mode select
 
 ---
 
-### 12. Game Settings Screen (`screens/gameSettings.js`)
+### 11. Game Settings Screen (`screens/gameSettings.js`)
 
 #### Description
 
@@ -261,17 +225,17 @@ Lets the player customise their game before starting — difficulty, number of r
 
 #### Acceptance Criteria
 
-- [ ] A Difficulty selector is rendered: Easy / Medium / Hard
-- [ ] A Number of Rounds selector is rendered: 5 / 10 / 15
-- [ ] A Preview Length selector is rendered: 5s / 10s / 15s / 30s
-- [ ] Sensible defaults are pre-populated (Medium / 10 rounds / 10s)
-- [ ] All values are saved to state on confirmation
-- [ ] An error or warning is shown if the chosen difficulty yields too few playable tracks
-- [ ] A Back button and a Start Game button are present
+- [✅] A Difficulty selector is rendered: Easy / Medium / Hard
+- [✅] A Number of Rounds selector is rendered: 5 / 10 / 15
+- [✅] A Preview Length selector is rendered: 5s / 10s / 15s
+- [✅] Sensible defaults are pre-populated (Medium / 10 rounds / 10s)
+- [✅] All values are saved to state on confirmation
+- [✅] An error or warning is shown if the chosen difficulty yields too few playable tracks
+- [✅] A Back button and a Start Game button are present
 
 ---
 
-### 13. Play Screen (`screens/play.js`)
+### 12. Play Screen (`screens/play.js`)
 
 #### Description
 
@@ -299,7 +263,7 @@ The core gameplay screen. Presents the audio preview, the four answer options, a
 
 ---
 
-### 14. Results Screen (`screens/results.js`)
+### 13. Results Screen (`screens/results.js`)
 
 #### Description
 
@@ -322,22 +286,22 @@ Summarises the player's performance at the end of the game with a final score, a
 
 ---
 
-## 7. UI & Styling
+## 6. UI & Styling
 
-### 15. Styling & Responsiveness (`styles.css`)
+### 14. Styling & Responsiveness (`styles.css`)
 
 #### Description
 
-A cohesive visual design that feels consistent with Spotify's aesthetic, works on all screen sizes, and provides clear interactive feedback throughout the game.
+A cohesive visual design that feels polished and modern, works on all screen sizes, and provides clear interactive feedback throughout the game.
 
 #### User Stories
 
-- As a player, I want the app to look polished and on-brand so that it feels professional.
+- As a player, I want the app to look polished so that it feels professional.
 - As a mobile user, I want the app to work comfortably on my phone so that I can play anywhere.
 
 #### Acceptance Criteria
 
-- [ ] A consistent colour palette is defined using CSS variables (Spotify green `#1DB954`, dark backgrounds, white text)
+- [ ] A consistent colour palette is defined using CSS variables (primary accent, dark backgrounds, white text)
 - [ ] All screen containers share a consistent layout (max-width, centred, padding)
 - [ ] All buttons have hover, active, and disabled states
 - [ ] Answer option buttons have correct (green) and incorrect (red) feedback states
@@ -348,28 +312,27 @@ A cohesive visual design that feels consistent with Spotify's aesthetic, works o
 
 ---
 
-## 8. Error Handling & Edge Cases
+## 7. Error Handling & Edge Cases
 
-### 16. Robustness & Error Handling
+### 15. Robustness & Error Handling
 
 #### Description
 
-Ensuring the app behaves gracefully under failure conditions — API errors, missing data, expired tokens, and unexpected user behaviour — so that the experience is never broken.
+Ensuring the app behaves gracefully under failure conditions — API errors, missing data, and unexpected user behaviour — so that the experience is never broken.
 
 #### Acceptance Criteria
 
 - [ ] No internet connection shows a friendly offline message
-- [ ] Spotify API being unavailable shows a retry option
+- [ ] iTunes API being unavailable shows a retry option
 - [ ] Artists or genres that return zero playable tracks prompt the user to try another selection
-- [ ] Token expiry mid-game silently refreshes without interrupting gameplay
 - [ ] Browser back navigation is handled by the router to prevent broken state
 - [ ] Page refresh mid-game either restores state or gracefully restarts from the landing screen
 
 ---
 
-## 9. Documentation
+## 8. Documentation
 
-### 17. Project Documentation
+### 16. Project Documentation
 
 #### Description
 
@@ -377,9 +340,9 @@ Clear, maintained documentation that explains the project setup, the screen flow
 
 #### Acceptance Criteria
 
-- [ ] `docs/api-notes.md` covers every Spotify endpoint used, expected response shapes, and known limitations (e.g. missing previews)
+- [ ] `docs/api-notes.md` covers every iTunes API endpoint used, expected response shapes, and known limitations (e.g. missing previews, rate limits)
 - [ ] `docs/screen-flow.md` describes every screen and the navigation paths between them
-- [ ] `README.md` includes setup instructions, how to run locally, and how to configure the Client ID
-- [ ] Inline comments in `authPkce.js` explain each step of the PKCE flow
+- [ ] `README.md` includes setup instructions, how to run locally, and iTunes API reference
+- [ ] Inline comments in `music-api/itunesApi.js` explain each search function and data mapping
 
 ---
