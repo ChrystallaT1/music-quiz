@@ -247,17 +247,17 @@ The core gameplay screen. Presents the audio preview, the four answer options, a
 
 #### Acceptance Criteria
 
-- [ ] Current round number and total rounds are displayed (e.g. "Round 3 of 10")
-- [ ] Current score is displayed
-- [ ] Audio preview player is shown with a play button and progress indicator
-- [ ] 4 answer option buttons are rendered for each round using `buildQuestion()`
-- [ ] Audio preview starts automatically (or on tap if autoplay is blocked)
-- [ ] All answer buttons are locked once the user makes a selection
-- [ ] The correct answer is highlighted green and the wrong selection highlighted red after guessing
-- [ ] The track name, artist name, and album art of the correct answer are shown after each round
-- [ ] The app auto-advances to the next round after a short delay (2–3 seconds)
-- [ ] On the final round, the app navigates to the results screen instead of looping
-- [ ] A friendly error is shown if the track pool runs out before all rounds are complete
+- [✅] Current round number and total rounds are displayed (e.g. "Round 3 of 10")
+- [✅] Current score is displayed
+- [✅] Audio preview player is shown with a play button and progress indicator
+- [✅] 4 answer option buttons are rendered for each round using `buildQuestion()`
+- [✅] Audio preview starts automatically (or on tap if autoplay is blocked)
+- [✅] All answer buttons are locked once the user makes a selection
+- [✅] The correct answer is highlighted green and the wrong selection highlighted red after guessing
+- [✅] The track name, artist name, and album art of the correct answer are shown after each round
+- [✅] The app auto-advances to the next round after a short delay (2–3 seconds)
+- [✅] On the final round, the app navigates to the results screen instead of looping
+- [✅] A friendly error is shown if the track pool runs out before all rounds are complete
 
 ---
 
